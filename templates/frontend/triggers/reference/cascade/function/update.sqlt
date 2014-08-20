@@ -1,0 +1,23 @@
+create function #{tablename}.#{functionName}
+  ()
+returns trigger
+  language 'plpgsql'
+  security definer
+as
+  $body$
+    begin
+      update public.#{tablename}
+      set
+        ( #{colname <> " version"}#{mconcat $ fmap setReferenceKeyName $ referredKey target}
+        )
+      = ( null#{mconcat $ fmap setReferenceKeyValue $ referredKey target}
+        )
+      from  #{target}."version"
+      where new."entry" = public.#{tablename}.#{colname <> " version"}
+      and   new."entry" = #{target}."version"."entry"
+      ;
+
+      return new;
+    end;
+  $body$
+;

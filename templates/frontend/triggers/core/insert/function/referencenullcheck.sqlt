@@ -1,0 +1,4 @@
+
+      if new.#{keyColname column} is not null then
+        raise exception 'insertions into % view must not specify %', #{toSqlString tablename}, #{toSqlString $ keyColname column};
+      end if;

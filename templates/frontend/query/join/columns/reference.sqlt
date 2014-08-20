@@ -1,0 +1,6 @@
+  left outer join #{tablename}.#{colname <> " reference"}
+    on (#{tablename}."journal"."entry" = #{tablename}.#{colname <> " reference"}."entry")
+  left outer join #{target}."journal" as #{colname <> " journal"}
+    on (#{tablename}.#{colname <> " reference"}.#{colname <> " reference"} = #{colname <> " journal"}."entry")
+  left outer join #{target}."identity" as #{colname <> " identity"}
+    on (#{colname <> " journal"}."identity" = #{colname <> " identity"}."identity")

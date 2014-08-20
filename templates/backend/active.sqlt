@@ -1,0 +1,8 @@
+create table #{tablename}."active"
+  ( "identity" bigint not null primary key references #{tablename}."identity"
+  , "entry"    bigint not null unique      references #{tablename}."journal"
+
+  , unique      ("identity", "entry") -- implicit index may make foreign key checks more efficient
+  , foreign key ("identity", "entry") references #{tablename}."journal" ("identity", "entry")
+  )
+;

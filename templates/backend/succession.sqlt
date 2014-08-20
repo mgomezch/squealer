@@ -1,0 +1,15 @@
+create table #{tablename}."succession"
+  ( "entry"     bigint                   not null primary key references #{tablename}."revocation"
+  , "successor" bigint                   not null unique      references #{tablename}."journal"
+  , "timestamp" timestamp with time zone not null -- redundant but required for time-efficient integrity
+
+  -- succession timestamp equals successor journal entry timestamp
+  , unique      ("successor", "timestamp") -- implicit index may make foreign key checks more efficient
+  , foreign key ("successor", "timestamp") references #{tablename}."journal" ("entry", "timestamp")
+
+  -- revocation end timestamp equals successor journal entry creation timestamp
+  , unique      ("entry", "timestamp") -- implicit index may make foreign key checks more efficient
+  , foreign key ("entry", "timestamp") references #{tablename}."revocation" ("entry", "end timestamp")
+
+  )
+;

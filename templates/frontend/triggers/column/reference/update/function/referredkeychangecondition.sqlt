@@ -1,0 +1,1 @@
+not (old.#{colname <> (" -> " <> keyColname keyColumn)} is not null) or old.#{colname <> (" -> " <> keyColname keyColumn)} <> new.#{colname <> (" -> " <> keyColname keyColumn)}

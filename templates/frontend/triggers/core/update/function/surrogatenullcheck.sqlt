@@ -1,0 +1,3 @@
+      if new."identity" is not null and new."identity" <> old."identity" then
+        raise exception 'updates to % view must not set surrogate key value', #{toSqlString tablename};
+      end if;

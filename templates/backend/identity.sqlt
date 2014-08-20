@@ -1,0 +1,4 @@
+create table #{tablename}."identity"
+  ( "identity" bigserial not null primary key#{cond (null key) "" $ (mconcat $ fmap identityColumn key) <> ("\n" <> keyUnique)}
+  )
+;

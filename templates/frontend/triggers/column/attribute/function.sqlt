@@ -1,0 +1,44 @@
+create function #{tablename}.#{"insert or update " <> (colname <> " function")}
+  ()
+returns trigger
+  language 'plpgsql'
+  security definer
+as
+  $body$
+    declare
+      #{"new " <> (colname <> " state")} bigint;
+    begin
+      if
+        new.#{colname} is not null
+      then
+        if
+          tg_op = 'INSERT'
+          or not (old.#{colname} is not null and old.#{colname} = new.#{colname})
+        then
+          insert into #{tablename}.#{colname <> " state"}
+            (    #{colname}) values
+            (new.#{colname})
+          returning   #{tablename}.#{colname <> " state"}.#{colname <> " state"}
+          into        #{"new " <> (colname <> " state")}
+          ;
+        else
+          select     #{tablename}.#{colname <> " proxy"}.#{colname <> " state"}
+          into       #{"new " <> (colname <> " state")}
+          from       #{tablename}."identity" natural join #{tablename}."active" natural join #{tablename}."journal"
+          inner join #{tablename}."succession" on (#{tablename}."journal"."entry" = #{tablename}."succession"."successor")
+          inner join #{tablename}.#{colname <> " proxy"} on (#{tablename}."succession"."entry" = #{tablename}.#{colname <> " proxy"}."entry")
+          where      #{mconcat $ intersperse "\n          and        " $ fmap identityJoin $ withSurrogate key}
+          ;
+        end if;
+
+        insert into  #{tablename}.#{colname <> " proxy"} ("entry", #{colname <> " state"})
+        select       #{tablename}."active"."entry", #{"new " <> (colname <> " state")}
+        from         #{tablename}."identity" inner join #{tablename}."active" using ("identity")
+        where        #{mconcat $ intersperse "\n        and          " $ fmap identityJoin $ withSurrogate key}
+        ;
+      end if;
+
+      return new;
+    end;
+  $body$
+;

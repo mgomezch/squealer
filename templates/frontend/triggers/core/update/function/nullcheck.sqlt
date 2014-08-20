@@ -1,0 +1,3 @@
+      if new.#{colname} is null then
+        raise exception 'null value in column % violates not-null constraint', #{toSqlString colname};
+      end if;

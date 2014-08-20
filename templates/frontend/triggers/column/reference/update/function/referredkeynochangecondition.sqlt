@@ -1,0 +1,1 @@
+old.#{colname <> (" -> " <> keyColname keyColumn)} = new.#{colname <> (" -> " <> keyColname keyColumn)}

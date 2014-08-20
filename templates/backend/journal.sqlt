@@ -1,0 +1,9 @@
+create table #{tablename}."journal"
+  ( "entry"     bigserial                not null primary key
+  , "identity"  bigint                   not null references #{tablename}."identity"
+  , "timestamp" timestamp with time zone not null default now()
+
+  , unique ("entry", "timestamp")
+  , unique ("entry", "identity" )
+  )
+;

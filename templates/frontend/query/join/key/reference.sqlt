@@ -1,0 +1,2 @@
+  inner join #{target}."journal" as #{colname <> " journal"} on (#{tablename}."identity".#{colname <> " version"} = #{colname <> " journal"}."entry")
+  inner join #{target}."identity" as #{colname <> " identity"} on (#{colname <> " journal"}."identity" = #{colname <> " identity"}."identity")

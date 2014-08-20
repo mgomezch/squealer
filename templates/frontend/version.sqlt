@@ -1,0 +1,12 @@
+create view #{tablename}."version" as
+  select
+    #{tablename}."journal"."entry",
+    #{tablename}."journal"."timestamp" as "journal timestamp",
+    #{tablename}."revocation"."end timestamp",
+    #{tablename}."succession"."successor",
+#{mconcat $ intersperse ",\n" $ fmap keySelect (withSurrogate key) <> fmap normalSelect columns}
+  from #{tablename}."identity" natural join #{tablename}."journal"
+  left outer join #{tablename}."revocation" on (#{tablename}."journal"."entry" = #{tablename}."revocation"."entry")
+  left outer join #{tablename}."succession" on (#{tablename}."journal"."entry" = #{tablename}."succession"."entry")
+#{mconcat $ intersperse "\n" $ fmap keyJoin (filter (has _Reference) key) <> fmap normalJoin columns}
+;

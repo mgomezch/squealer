@@ -1,0 +1,10 @@
+create table #{tablename}."revocation"
+  ( "entry"           bigint                   not null primary key references #{tablename}."journal"
+  , "start timestamp" timestamp with time zone not null -- redundant but required for time-efficient integrity
+  , "end timestamp"   timestamp with time zone not null default now()
+
+  , check ("start timestamp" <= "end timestamp")
+  , unique ("entry", "end timestamp")
+  , foreign key ("entry", "start timestamp") references #{tablename}."journal" ("entry", "timestamp")
+  )
+;

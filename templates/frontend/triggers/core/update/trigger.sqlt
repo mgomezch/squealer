@@ -1,0 +1,3 @@
+create trigger "00 update"
+instead of update on public.#{tablename}
+for each row execute procedure #{tablename}."update function"();

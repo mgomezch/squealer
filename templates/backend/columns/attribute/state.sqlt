@@ -1,0 +1,5 @@
+create table #{tablename}.#{colname <> " state"}
+  ( #{colname <> " state"} bigserial not null primary key
+  , #{colname} #{coltype} not null
+  )
+;

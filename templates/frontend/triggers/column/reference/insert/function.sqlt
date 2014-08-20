@@ -1,0 +1,29 @@
+create function #{tablename}.#{"insert " <> (colname <> " function")}
+  ()
+returns trigger
+  language 'plpgsql'
+  security definer
+as
+  $body$
+    begin
+      if new.#{colname <> " version"} is not null
+      then
+        raise exception 'insertions into % view must not specify % version', #{toSqlString tablename}, #{toSqlString colname};
+      end if;
+
+      if #{mconcat $ intersperse " and " $ fmap targetNotNull $ referredKey target} then
+        insert into #{tablename}.#{colname <> " reference"} ("entry", #{colname <> " reference"})
+        select      #{tablename}."active"."entry", #{target}."active"."entry"
+        from        #{tablename}."identity" natural join #{tablename}."active",
+                    #{target}."identity" natural join #{target}."active"
+        where       #{mconcat $ intersperse "\n      and         " $ fmap identityJoin (withSurrogate key) <> fmap targetJoin (referredKey target)}
+        ;
+        if not found then
+          raise exception 'no active % row matches insert into % table % reference', #{toSqlString target}, #{toSqlString tablename}, #{toSqlString colname};
+        end if;
+      end if;
+
+      return new;
+    end;
+  $body$
+;

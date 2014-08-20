@@ -1,0 +1,26 @@
+create function #{tablename}.#{functionName}
+  ()
+returns trigger
+  language 'plpgsql'
+  security definer
+as
+  $body$
+    begin
+      perform *
+      from    public.#{tablename}
+      where   public.#{tablename}.#{colname <> " version"} = new."entry"
+      limit   1
+      ;
+      if found then
+        raise exception '% on % table breaks % table % reference'
+        , #{toSqlString event    }
+        , #{toSqlString target   }
+        , #{toSqlString tablename}
+        , #{toSqlString colname  }
+        ;
+      end if;
+
+      return new;
+    end;
+  $body$
+;

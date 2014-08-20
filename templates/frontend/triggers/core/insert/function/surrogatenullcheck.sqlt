@@ -1,0 +1,4 @@
+
+      if new."identity" is not null then
+        raise exception 'insertions into % view must not specify surrogate key value', #{toSqlString tablename};
+      end if;

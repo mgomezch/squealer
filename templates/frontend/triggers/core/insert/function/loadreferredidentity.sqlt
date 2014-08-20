@@ -1,0 +1,8 @@
+        select #{target}."active"."entry"
+        into   new.#{colname <> " version"}
+        from   (#{target}."identity" natural join #{target}."journal" natural join #{target}."active")
+        where  #{mconcat $ intersperse "\n        and    " $ fmap loadReferredIdentityJoin $ referredKey target}
+        ;
+        if not found then
+          raise exception 'no active % row matches % reference on insert into % table', #{toSqlString target}, #{toSqlString colname}, #{toSqlString tablename};
+        end if;

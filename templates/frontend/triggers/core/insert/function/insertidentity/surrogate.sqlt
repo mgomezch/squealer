@@ -1,0 +1,7 @@
+        insert into #{tablename}."identity"
+          ("identity") values
+          (default   )
+        returning #{tablename}."identity"."identity"
+        into "new identity"
+        ;
+        new."identity" := "new identity";

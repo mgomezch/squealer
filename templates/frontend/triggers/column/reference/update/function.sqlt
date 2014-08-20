@@ -1,0 +1,60 @@
+create function #{tablename}.#{"update " <> (colname <> " function")}
+  ()
+returns trigger
+  language 'plpgsql'
+  security definer
+as
+  $body$
+    begin
+      if
+        new.#{colname <> " version"} is not null
+        and (
+          not (old.#{colname <> " version"} is not null)
+          or old.#{colname <> " version"} <> new.#{colname <> " version"}
+        )
+      then
+        raise exception 'updates to % view must not set % version to non-null values', #{toSqlString tablename}, #{toSqlString colname};
+
+      elsif (
+        -- If the referred identity did not change, and the referred version was set to null, the user requested updating the reference to the currently active version of the same row (“same” by identity).
+        old.#{colname <> " version"} is not null
+        and not (new.#{colname <> " version"} is not null)
+        and #{mconcat $ intersperse "\n          and " $ fmap identicalReferredKeyCondition $ referredKey target}
+
+        -- If the referred version did not change, but the referred identity did, the user requested making the reference point to the currently active version of another row (“another” by identity).
+      ) or (#{mconcat $ intersperse "\n        and " $ fmap referredKeyNullCheck (referredKey target)}
+        and (
+          #{mconcat $ intersperse "\n          or " $ fmap referredKeyChangeCondition (referredKey target)}
+        )
+      ) then
+        -- In either case, find the currently active version of the requested row and establish the reference.
+        insert into #{tablename}.#{colname <> " reference"} ("entry", #{colname <> " reference"})
+        select      #{tablename}."active"."entry", #{target}."active"."entry"
+        from        #{tablename}."identity" natural join #{tablename}."active",
+                    #{target}."identity" natural join #{target}."active"
+        where       #{mconcat $ intersperse "\n        and         " $ fmap identityJoin (withSurrogate key) <> fmap targetJoin (referredKey target)}
+        ;
+        if not found then
+          raise exception 'no active % row matches update to % table % reference', #{toSqlString target}, #{toSqlString tablename}, #{toSqlString colname};
+        end if;
+
+      -- If the reference was unchanged in this update, and a reference actually existed (it was not null), then the new referrer version should refer to the same referred version as the old version.  This works just like regular attributes: the proxy pointer is copied in the new version if it exists.
+      elsif
+        old.#{colname <> " version"} is not null and new.#{colname <> " version"} is not null
+        and old.#{colname <> " version"} = new.#{colname <> " version"}
+        and #{mconcat $ intersperse "\n        and " $ fmap referredKeyNullCheck (referredKey target)}
+        and #{mconcat $ intersperse "\n        and " $ fmap referredKeyNoChangeCondition (referredKey target)}
+      then
+        insert into #{tablename}.#{colname <> " reference"} ("entry", #{colname <> " reference"})
+        select      #{tablename}."active"."entry", new.#{colname <> " version"}
+        from        #{tablename}."identity" natural join #{tablename}."active"
+        where       #{mconcat $ intersperse "\n        and         " $ fmap identityJoin $ withSurrogate key}
+        ;
+        -- FIXME: what if the referenced entity version is no longer active?  should this restrict, leave the reference as-is, or try to update it?
+        -- FIXME: is it possible for the referenced entity version to no longer be active if this is a proper covariant reference with on delete/update cascade/restrict triggers?
+      end if;
+
+      return new;
+    end;
+  $body$
+;

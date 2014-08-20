@@ -1,0 +1,4 @@
+  left outer join #{tablename}.#{colname <> " proxy"}
+    on (#{tablename}."journal"."entry" = #{tablename}.#{colname <> " proxy"}."entry")
+  left outer join #{tablename}.#{colname <> " state"}
+    using (#{colname <> " state"})

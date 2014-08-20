@@ -1,0 +1,5 @@
+*.hi
+*.o
+*.svg
+squealer-graph
+serve

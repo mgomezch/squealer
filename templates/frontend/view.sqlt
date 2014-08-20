@@ -1,0 +1,6 @@
+create view public.#{tablename} as
+  select
+#{mconcat $ intersperse ",\n" $ fmap keySelect (withSurrogate key) <> fmap normalSelect columns}
+  from #{tablename}."active" natural join #{tablename}."identity" natural join #{tablename}."journal"
+#{mconcat $ intersperse "\n" $ fmap keyJoin (filter (has _Reference) key) <> fmap normalJoin columns}
+;

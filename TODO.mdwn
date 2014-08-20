@@ -1,0 +1,17 @@
+*   Generar *triggers* de referencias con `on update/delete set null`.
+
+*   Generar pruebas con `pgTAP`.
+
+*   Configuración del ejecutable con `cmdargs` para leer de JSON y fuente Haskell (con `read`), y dirigir salida a otros sitios y tal.
+
+*   Sanity checks:
+
+    *   que no haya referencias cíclicas
+
+    *   que todos los `target`s vayan a tablas declaradas
+
+    *   que no haya conflictos de nombres en los identificadores declarados
+
+*   Resolver el problema de los conflictos de nombres para los identificadores generados.
+
+*   No usar `natural join`.

@@ -1,0 +1,18 @@
+      if
+        new.#{colname <> " version"} is not null and
+        old.#{colname <> " version"} <> new.#{colname <> " version"}
+      then
+        raise exception 'updates to % view must not set %', #{toSqlString tablename}, #{toSqlString $ colname <> " version"};
+      elsif
+        new.#{colname <> " version"} is null
+#{mconcat $ intersperse "\n" $ fmap existingVersionCondition $ referredKey target}
+      then
+        select #{target}."active"."entry"
+        into   new.#{colname <> " version"}
+        from   #{target}."active" natural join #{target}."identity"
+        where  #{mconcat $ intersperse "\n        and    " $ fmap referredIdentityJoin $ referredKey target}
+        ;
+        if not found then
+          raise exception 'no active % row matches % reference on update to % row', #{toSqlString target}, #{toSqlString colname}, #{toSqlString tablename};
+        end if;
+      end if;

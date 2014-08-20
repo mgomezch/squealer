@@ -1,0 +1,16 @@
+create function #{tablename}.#{functionName}
+  ()
+returns trigger
+  language 'plpgsql'
+  security definer
+as
+  $body$
+    begin
+      delete from public.#{tablename}
+      where public.#{tablename}."client version" = new."entry"
+      ;
+
+      return new;
+    end;
+  $body$
+;

@@ -1,0 +1,97 @@
+database name: SCD
+
+
+
+prologue: |
+  create type foo as enum ('a', 'b', 'c');
+  create type bar as enum ('d', 'e', 'f');
+
+
+
+tables:
+
+
+
+- table name: Product
+
+  primary key columns:
+  - Attribute:
+      name: code
+      type: text
+
+  data columns:
+  - Attribute:
+      name: name
+      type: text
+  - Attribute:
+      name: price
+      type: money
+
+
+
+- table name: Client
+
+  primary key columns:
+  - Attribute:
+      name: code
+      type: text
+
+  data columns:
+  - Attribute:
+      name: name
+      type: text
+  - Attribute:
+      name: date of birth
+      type: date
+
+
+
+- table name: Order
+
+  primary key columns:
+  - Attribute:
+      name: code
+      type: text
+
+  data columns:
+  - Attribute:
+      name: timestamp
+      type: timestamp with time zone
+  - Attribute:
+      name: status
+      type: text
+  - Reference:
+      name: client
+      target: Client
+      onUpdate: cascade
+      onDelete: restrict
+
+
+
+- table name: BillItem
+
+  primary key columns:
+  - Reference:
+      name: order
+      target: Order
+      onUpdate: cascade
+      onDelete: restrict
+  - Reference:
+      onUpdate: preserve
+      name: product
+      onDelete: preserve
+      target: Product
+
+  data columns:
+  - Attribute:
+      name: quantity
+      type: integer
+
+
+
+
+
+
+epilogue: |
+  create type foo1 as enum ('a1', 'b1', 'c1');
+  create type bar1 as enum ('d1', 'e1', 'f1');

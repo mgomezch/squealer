@@ -1,0 +1,5 @@
+create table #{tablename}.#{colname <> " proxy"}
+  ( "entry" bigint not null primary key references #{tablename}."journal"
+  , #{colname <> " state"} bigint not null references #{tablename}.#{colname <> " state"}
+  )
+;

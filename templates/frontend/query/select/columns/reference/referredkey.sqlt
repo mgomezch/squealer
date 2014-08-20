@@ -1,0 +1,1 @@
+    #{colname <> " identity"}.#{keyColname keyColumn} as #{colname <> (" -> " <> keyColname keyColumn)}

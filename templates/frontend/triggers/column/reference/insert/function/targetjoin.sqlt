@@ -1,0 +1,1 @@
+#{target}."identity".#{keyColname keyColumn} = new.#{colname <> (" -> " <> keyColname keyColumn)}

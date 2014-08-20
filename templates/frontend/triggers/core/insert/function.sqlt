@@ -1,0 +1,36 @@
+create function #{tablename}."view insert"
+  ()
+returns trigger
+  language 'plpgsql'
+  security definer
+as
+  $body$
+    declare
+      "new identity" bigint;
+      "new entry"    bigint;
+    begin#{mconcat $ fmap referenceNullCheck $ filter (has _Reference) key}#{cond (null key) surrogateNullCheck ""}
+      select     #{tablename}."identity"."identity"#{mconcat $ fmap referenceColumn $ filter (has _Reference) key}
+      into       "new identity"#{mconcat $ fmap referenceNewColumn $ filter (has _Reference) key}
+      from       #{tablename}."identity"#{mconcat $ fmap referenceJoin $ filter (has _Reference) key}
+      where      #{mconcat $ intersperse "\n      and        " $ fmap identityJoin $ withSurrogate key}
+      ;
+
+      if not found then#{mconcat $ fmap (mappend "\n") $ fmap (flip mappend "\n") $ fmap loadReferredIdentity $ filter (has _Reference) key}
+#{cond (null key) surrogateInsertIdentity naturalInsertIdentity}
+      end if;
+
+      insert into #{tablename}."journal"
+        (    "identity") values
+        ("new identity")
+      returning #{tablename}."journal"."entry" into "new entry"
+      ;
+
+      insert into #{tablename}."active"
+        (    "identity",     "entry") values
+        ("new identity", "new entry")
+      ;
+
+      return new;
+    end;
+  $body$
+;

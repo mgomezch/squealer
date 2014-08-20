@@ -1,0 +1,26 @@
+create function #{tablename}."delete function"
+  ()
+returns trigger
+  language 'plpgsql'
+  security definer
+as
+  $body$
+    begin
+      insert into  #{tablename}."revocation" ("entry", "start timestamp")
+      select       #{tablename}."journal"."entry", #{tablename}."journal"."timestamp"
+      from         #{tablename}."active"
+      natural join #{tablename}."identity"
+      natural join #{tablename}."journal"
+      where        #{mconcat $ intersperse "\n      and          " $ fmap joinCondition $ withSurrogate key}
+      ;
+
+      delete from #{tablename}."active"
+      using       #{tablename}."identity" natural join #{tablename}."journal"
+      where       #{tablename}."active"."entry" = #{tablename}."journal"."entry"
+      and         #{mconcat $ intersperse "\n      and         " $ fmap joinCondition $ withSurrogate key}
+      ;
+
+      return old;
+    end;
+  $body$
+;

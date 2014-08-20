@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -e
+
+(
+  createdb #{shellEscape $ unpack dbname}
+  for table in #{mconcat $ intersperse " " $ fmap shellEscape files}
+  do
+    printf '%s\n' "\\i '${table//\'/''/}.sql'"
+  done | psql --quiet --dbname #{shellEscape $ unpack dbname} --file=-
+)

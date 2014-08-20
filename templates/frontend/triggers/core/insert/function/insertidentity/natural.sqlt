@@ -1,0 +1,6 @@
+        insert into #{tablename}."identity"
+          (#{mconcat $ intersperse ", " $                         fmap toText $ fmap keyColname $ withSurrogate key}) values
+          (#{mconcat $ intersperse ", " $ fmap (mappend "new.") $ fmap toText $ fmap keyColname $ withSurrogate key})
+        returning #{tablename}."identity"."identity"
+        into "new identity"
+        ;
