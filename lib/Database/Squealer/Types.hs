@@ -164,9 +164,16 @@ effort for Squealer.  Also, the implied schema for input files is
 incompatible with the currently used schema, which is directly derived
 from the current type schema and hence allows for many errors.  If this
 change is implemented, the old Squealer input file format would become
-unsupported.
+unsupported — although the old format can be translated to the new one,
+so it could be automatically converted.
 
 Aeson can probably still derive FromJSON/ToJSON for this schema, though.
+
+Note the use of `Data.Map` for the columns in a table implies column
+order is not expressed in the schema, which *may* be undesirable if a
+specific order is needed in the generated views.  There is no good
+reason for this, but the current types use a list precisely to allow
+schema-specified column order.
 -}
 
 data Column
