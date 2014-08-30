@@ -1,6 +1,6 @@
 create table #{tablename}."succession"
-  ( "entry"     bigint                   not null primary key references #{tablename}."revocation"
-  , "successor" bigint                   not null unique      references #{tablename}."journal"
+  ( "entry"     uuid                     not null primary key references #{tablename}."revocation"
+  , "successor" uuid                     not null unique      references #{tablename}."journal"
   , "timestamp" timestamp with time zone not null -- redundant but required for time-efficient integrity
 
   -- succession timestamp equals successor journal entry timestamp

@@ -1,5 +1,5 @@
 create table #{tablename}.#{colname <> " state"}
-  ( #{colname <> " state"} bigserial not null primary key
+  ( #{colname <> " state"} uuid not null primary key default uuid_generate_v4()
   , #{colname} #{coltype} not null
   )
 ;

@@ -6,8 +6,8 @@ returns trigger
 as
   $body$
     declare
-      "new identity" bigint;
-      "new entry"    bigint;
+      "new identity" uuid;
+      "new entry"    uuid;
     begin#{mconcat $ fmap referenceNullCheck $ filter (has _Reference) key}#{cond (null key) surrogateNullCheck ""}
       select     #{tablename}."identity"."identity"#{mconcat $ fmap referenceColumn $ filter (has _Reference) key}
       into       "new identity"#{mconcat $ fmap referenceNewColumn $ filter (has _Reference) key}

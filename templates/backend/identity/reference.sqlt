@@ -1,1 +1,1 @@
-  , #{colname <> " version"} bigint not null references #{target}."journal" deferrable initially deferred
+  , #{colname <> " version"} uuid not null references #{target}."journal" deferrable initially deferred

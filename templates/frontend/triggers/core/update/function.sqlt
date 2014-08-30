@@ -6,9 +6,9 @@ returns trigger
 as
   $body$
     declare
-      "old entry" bigint;
-      "new identity" bigint;
-      "new entry" bigint;
+      "old entry" uuid;
+      "new identity" uuid;
+      "new entry" uuid;
     begin#{mconcat $ fmap (mappend "\n") $ fmap (flip mappend "\n") $ fmap nullCheck keyColnames <> fmap referredIdentity (filter (has _Reference) key)}#{cond (null key) ("\n" <> (surrogateNullCheck <> "\n")) ""}
       select #{tablename}."active"."entry"
       into   "old entry"

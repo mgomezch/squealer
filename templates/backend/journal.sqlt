@@ -1,6 +1,6 @@
 create table #{tablename}."journal"
-  ( "entry"     bigserial                not null primary key
-  , "identity"  bigint                   not null references #{tablename}."identity"
+  ( "entry"     uuid                     not null primary key default uuid_generate_v4()
+  , "identity"  uuid                     not null references #{tablename}."identity"
   , "timestamp" timestamp with time zone not null default now()
 
   , unique ("entry", "timestamp")

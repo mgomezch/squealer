@@ -1,4 +1,4 @@
 create table #{tablename}."identity"
-  ( "identity" bigserial not null primary key#{cond (null key) "" $ (mconcat $ fmap identityColumn key) <> ("\n" <> keyUnique)}
+  ( "identity" uuid not null primary key default uuid_generate_v4()#{cond (null key) "" $ (mconcat $ fmap identityColumn key) <> ("\n" <> keyUnique)}
   )
 ;

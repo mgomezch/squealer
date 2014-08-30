@@ -6,7 +6,7 @@ returns trigger
 as
   $body$
     declare
-      #{"new " <> (colname <> " state")} bigint;
+      #{"new " <> (colname <> " state")} uuid;
     begin
       if
         new.#{colname} is not null

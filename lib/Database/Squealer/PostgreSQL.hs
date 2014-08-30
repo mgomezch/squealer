@@ -132,7 +132,7 @@ toSQL
 
     withSurrogate keyColumns
       = if null keyColumns
-        then [Attribute "identity" "bigserial"]
+        then [Attribute "identity" "uuid"]
         else keyColumns
 
     keyColname column = case column of
@@ -142,6 +142,7 @@ toSQL
 
     generateDatabase Database {..}
       = pure generateLoader
+      ⊕ pure generatePrelude
       ⊕ (simpleDocument "prologue.sql" <$> maybeToList prologue)
       ⊕ (simpleDocument "epilogue.sql" <$> maybeToList epilogue)
       ⊕ fmap generateTable tables
@@ -155,7 +156,8 @@ toSQL
             }
           where
             files
-              = maybeToList ("prologue" <$ prologue)
+              = pure "prelude"
+              ⊕ maybeToList ("prologue" <$ prologue)
               ⊕ topoSort tables
               ⊕ maybeToList ("epilogue" <$ epilogue)
 
@@ -177,6 +179,12 @@ toSQL
                   ∘ fmap (unpack ∘ target)
                   ∘ filter (has _Reference)
                   $ key ⊕ columns
+
+        generatePrelude
+          = Document
+            { name = "prelude.sql"
+            , contents = toStrict ∘ toLazyText $ $(textFile "templates/prelude.sqlt") ()
+            }
 
         referredKey target = withSurrogate $ key =≪ filter ((target ≡) ∘ tablename) tables
 
