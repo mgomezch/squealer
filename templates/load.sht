@@ -3,6 +3,7 @@
 set -e
 
 (
+  export PGOPTIONS='--client-min-messages=warning'
   createdb #{shellEscape $ unpack dbname}
   for table in #{mconcat $ intersperse " " $ fmap shellEscape files}
   do
