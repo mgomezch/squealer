@@ -1,5 +1,5 @@
 name         : squealer
-version      : 0.3
+version      : 0.2.1
 synopsis     : PostgreSQL DDL generator for auditable databases
 description  : Squealer is a SQL DDL generator targeting
                specifically PostgreSQL's dialect of SQL.  It
