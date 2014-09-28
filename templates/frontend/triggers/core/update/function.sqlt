@@ -16,10 +16,6 @@ as
       where  #{mconcat $ intersperse "\n      and    " $ fmap joinActive $ withSurrogate key}
       ;
 
-      delete from public.#{tablename}
-      where       #{mconcat $ intersperse "\n      and         " $ fmap joinDelete $ withSurrogate key}
-      ;
-
       select #{tablename}."identity"."identity"
       into   "new identity"
       from   #{tablename}."identity"
@@ -36,15 +32,28 @@ as
       into "new entry"
       ;
 
+      delete from #{tablename}."active"
+      using       #{tablename}."identity" natural join #{tablename}."journal"
+      where       #{tablename}."active"."entry" = #{tablename}."journal"."entry"
+      and         #{mconcat $ intersperse "\n          and         " $ fmap joinActive $ withSurrogate key}
+      ;
+
       insert into #{tablename}."active"
         (    "identity",     "entry") values
         ("new identity", "new entry")
       ;
 
+      with
+        "revocation" as (
+          insert into  #{tablename}."revocation" ("entry", "start timestamp")
+          select       #{tablename}."journal"."entry", #{tablename}."journal"."timestamp"
+          from         #{tablename}."journal"
+          where        #{tablename}."journal"."entry" = "old entry"
+          returning    #{tablename}."revocation"."end timestamp"
+        )
       insert into #{tablename}."succession" ("entry", "successor", "timestamp")
-      select      "old entry", "new entry", #{tablename}."revocation"."end timestamp"
-      from        #{tablename}."revocation"
-      where       #{tablename}."revocation"."entry" = "old entry"
+      select      "old entry", "new entry", "revocation"."end timestamp"
+      from        "revocation"
       ;
 
       return new;

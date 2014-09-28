@@ -6,10 +6,12 @@ returns trigger
 as
   $body$
     begin
-      perform *
-      from    public.#{tablename}
-      where   public.#{tablename}.#{colname <> " version"} = new."entry"
-      limit   1
+      perform    *
+      from       public.#{tablename}
+      inner join #{target}."version" on public.#{tablename}.#{colname <> " version"} = #{target}."version"."entry"
+      where      public.#{tablename}.#{colname <> " version"} = new."entry"
+      and        #{target}."version"."successor" is null
+      limit      1
       ;
       if found then
         raise exception '% on % table breaks % table % reference'

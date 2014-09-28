@@ -325,7 +325,6 @@ toSQL
                         referredIdentityJoin column = $(textFile "templates/frontend/triggers/core/update/function/referredidentity/join.sqlt") ()
 
                     joinActive      column = $(textFile "templates/frontend/triggers/core/update/function/joinactive.sqlt") ()
-                    joinDelete      column = $(textFile "templates/frontend/triggers/core/update/function/joindelete.sqlt") ()
                     joinNewIdentity column = $(textFile "templates/frontend/triggers/core/update/function/joinnewidentity.sqlt") ()
 
                     surrogateInsertIdentity = $(textFile "templates/frontend/triggers/core/update/function/insertidentity/surrogate.sqlt") ()

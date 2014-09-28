@@ -14,7 +14,7 @@ as
         )
       from  #{target}."version"
       where new."entry" = public.#{tablename}.#{colname <> " version"}
-      and   new."entry" = #{target}."version"."entry"
+      and   new."successor" = #{target}."version"."entry"
       ;
 
       return new;

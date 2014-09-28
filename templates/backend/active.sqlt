@@ -1,6 +1,6 @@
 create table #{tablename}."active"
-  ( "identity" uuid not null primary key references #{tablename}."identity"
-  , "entry"    uuid not null unique      references #{tablename}."journal"
+  ( "identity" uuid not null primary key references #{tablename}."identity" deferrable initially immediate
+  , "entry"    uuid not null unique      references #{tablename}."journal"  deferrable initially immediate
 
   , unique      ("identity", "entry") -- implicit index may make foreign key checks more efficient
   , foreign key ("identity", "entry") references #{tablename}."journal" ("identity", "entry")

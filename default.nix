@@ -6,7 +6,7 @@
 
 cabal.mkDerivation (self: {
   pname = "squealer";
-  version = "0.2";
+  version = "0.3";
   src = ./.;
   isLibrary = true;
   isExecutable = true;

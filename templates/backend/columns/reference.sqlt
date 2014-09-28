@@ -1,5 +1,5 @@
 create table #{tablename}.#{colname <> " reference"}
   ( "entry" uuid not null primary key references #{tablename}."journal"
-  , #{colname <> " reference"} uuid not null references #{target}."journal" ("entry") deferrable initially deferred
+  , #{colname <> " reference"} uuid not null references #{target}."journal" ("entry") deferrable initially immediate
   )
 ;

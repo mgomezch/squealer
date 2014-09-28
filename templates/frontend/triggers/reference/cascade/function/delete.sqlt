@@ -7,7 +7,7 @@ as
   $body$
     begin
       delete from public.#{tablename}
-      where public.#{tablename}."client version" = new."entry"
+      where  new."entry" = public.#{tablename}.#{colname <> " version"}
       ;
 
       return new;

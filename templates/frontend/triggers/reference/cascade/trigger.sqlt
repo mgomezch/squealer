@@ -1,3 +1,4 @@
-create trigger #{triggerName}
+create constraint trigger #{triggerName}
 after insert on #{target}.#{eventTable}
+deferrable initially immediate
 for each row execute procedure #{tablename}.#{functionName}();
