@@ -1,1 +1,1 @@
-, #{target column}."active"."entry"
+, #{colname column <> " active"}."entry"

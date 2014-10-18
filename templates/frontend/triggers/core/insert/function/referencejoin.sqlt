@@ -1,2 +1,2 @@
 
-      inner join (#{target column}."identity" natural join #{target column}."journal" natural join #{target column}."active") on (#{tablename}."identity".#{keyColname column} = #{target column}."journal"."entry")
+      inner join (#{target column}."identity" as #{colname column <> " identity"} natural join #{target column}."journal" as #{colname column <> " journal"} natural join #{target column}."active" as #{colname column <> " active"}) on (#{tablename}."identity".#{keyColname column} = #{colname column <> " journal"}."entry")
